@@ -24,12 +24,17 @@ flowchart TD
 
     INFRA --> NS_DIR["📂 namespaces/"]
     INFRA --> GW_DIR["📂 gateway/"]
+    INFRA --> ARGO_DIR["📂 argocd/"]
 
     NS_DIR --> NS_FILE["📄 nome-do-grupo.yaml\nCriado pelo admin ao cadastrar\num novo grupo.\n─────────────────\nNamespace\n  Cria o espaço isolado do grupo.\n  Label facul/allowed=true autoriza\n  o namespace a criar rotas no Gateway.\n─────────────────\nResourceQuota\n  Teto máximo de CPU, memória\n  e volumes que o grupo pode usar.\n─────────────────\nLimitRange\n  Valores padrão por container\n  caso o grupo não especifique."]
 
-    GW_DIR --> GWC["📄 gatewayclass.yaml\nDefine qual implementação\nde Gateway o cluster usa.\nCriado uma única vez,\nnunca muda.\n─────────────────\nAponta para o Traefik como\ncontrolador do Gateway."]
+    GW_DIR --> GWC["📄 gatewayclass.yaml\nDefine qual implementação\nde Gateway o cluster usa.\nCriado uma única vez,\nnunca muda.\n─────────────────\nAponta para o Envoy Gateway\ncomo controlador do Gateway.\ncontrollerName:\ngateway.envoyproxy.io/gatewayclass-controller"]
 
     GW_DIR --> GW["📄 gateway.yaml\nPonto de entrada do cluster\nna rede da faculdade.\n─────────────────\n• Escuta requisições na porta 80\n• Distribui para os grupos\n  via HTTPRoutes\n• allowedRoutes: só namespaces\n  com label facul/allowed=true\n  podem anexar rotas aqui\n─────────────────\n⚠ Apenas o admin altera este arquivo"]
+
+    ARGO_DIR --> APP_DIR["📂 applications/"]
+
+    APP_DIR --> APP_FILE["📄 nome-do-grupo.yaml\nCriado pelo admin junto com o namespace.\nRegistra o grupo no ArgoCD e define\nqual pasta do repo ele deve observar.\n─────────────────\nsource.path: apps/nome-do-grupo\n  Pasta do repo que o ArgoCD monitora.\n  Qualquer mudança aqui dispara o sync.\n─────────────────\ndestination.namespace: nome-do-grupo\n  Namespace onde os recursos\n  do grupo serão aplicados.\n─────────────────\nsyncPolicy.automated\n  prune: remove o que foi\n  deletado do repo.\n  selfHeal: reverte mudanças\n  manuais feitas direto no cluster.\n─────────────────\n⚠ Um arquivo por grupo\n⚠ Criado e mantido pelo admin"]
 
     %% ── DOCS ──────────────────────────────────────────
     DOCS["📂 docs/\nDocumentação para os grupos.\nDúvidas sobre deploy, manifests\ne limites de recursos."]
@@ -69,5 +74,5 @@ flowchart TD
     class ROOT root
     class APPS,GRUPO section
     class DEPLOY,SVC,ROUTE groupFile
-    class INFRA,NS_DIR,GW_DIR,NS_FILE,GWC,GW adminOnly
+    class INFRA,NS_DIR,GW_DIR,NS_FILE,GWC,GW,ARGO_DIR,APP_DIR,APP_FILE adminOnly
     class DOCS,HOWTO neutral

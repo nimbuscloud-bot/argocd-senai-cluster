@@ -1,0 +1,41 @@
+# 1. NAMESPACE
+# Cria o isolamento e aplica a label necessária para o Gateway API
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: grupo-teste
+  labels:
+    senai/allowed: "true"
+---
+# 2. RESOURCE QUOTA
+# Define os limites físicos (hard limits) para o Namespace
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: grupo-quota
+  namespace: grupo-teste
+spec:
+  hard:
+    requests.cpu: "2"
+    requests.memory: 4Gi
+    limits.cpu: "4"
+    limits.memory: 8Gi
+    persistentvolumeclaims: "5"
+    requests.storage: 10Gi
+---
+# 3. LIMIT RANGE
+# Define valores automáticos se os containers forem criados sem specs
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: grupo-limits
+  namespace: grupo-teste
+spec:
+  limits:
+  - default:          # Limite padrão se não especificado
+      cpu: 500m
+      memory: 512Mi
+    defaultRequest:   # Reserva padrão se não especificada
+      cpu: 100m
+      memory: 256Mi
+    type: Container
