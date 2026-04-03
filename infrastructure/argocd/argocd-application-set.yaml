@@ -6,7 +6,7 @@ metadata:
 spec:
   generators:
     - git:
-        repoURL: 'https://github.com/PhrL0/argocd-senai-cluster.git'
+        repoURL: 'https://github.com/nimbuscloud-bot/argocd-senai-cluster.git'
         revision: HEAD
         # O segredo está aqui: o Argo vai "scannear" subpastas dentro de 'apps'
         directories:
@@ -18,7 +18,7 @@ spec:
     spec:
       project: default
       source:
-        repoURL: 'https://github.com/PhrL0/argocd-senai-cluster.git'
+        repoURL: 'https://github.com/nimbuscloud-bot/argocd-senai-cluster.git'
         targetRevision: HEAD
         path: '{{path}}' # Usa o caminho da pasta encontrada (ex: apps/grupo-01)
       destination:
