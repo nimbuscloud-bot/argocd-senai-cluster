@@ -5,3 +5,4 @@ kind: Kustomization
 resources:
   - apps/grupo-teste
   - apps/grupo-betinho
+  - apps/phrl0-page-ioturn-demo
