@@ -1,15 +1,15 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: argocd-route
-  namespace: argocd
+  name: headlamp-route
+  namespace: kube-system
 spec:
   parentRefs:
   - name: cluster-gateway-gateway
     namespace: envoy-gateway-system
   hostnames:
-    - "argocd-senai.com"
+    - "headlamp-senai.com"
   rules:
   - backendRefs:
-    - name: argocd-server
+    - name: my-headlamp
       port: 80
