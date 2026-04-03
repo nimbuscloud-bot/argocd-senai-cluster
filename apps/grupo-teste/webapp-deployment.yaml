@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: web-app-deployment
-  namespace: grupo-teste
+  namespace: grupo-betinho
   labels:
     app: web-app
 spec:
