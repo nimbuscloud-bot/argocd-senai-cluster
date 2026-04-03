@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: 'https://github.com/PhrL0/argocd-senai-cluster.git'
     targetRevision: HEAD
-    path: .. # APONTA PARA A RAIZ ONDE ESTÁ O KUSTOMIZATION MESTRE
+    path: ../../kustomization.yaml # APONTA PARA A RAIZ ONDE ESTÁ O KUSTOMIZATION MESTRE
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: argocd 
