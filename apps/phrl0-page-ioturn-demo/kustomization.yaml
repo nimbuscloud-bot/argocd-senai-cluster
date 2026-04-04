@@ -1,8 +1,0 @@
-# /grupo-01/kustomization.yaml
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-
-namespace: phrl0-page-ioturn-demo  # Força tudo deste grupo a ir para este namespace
-
-resources:
-  - namespace.yaml
