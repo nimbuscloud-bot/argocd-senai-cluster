@@ -8,7 +8,7 @@ spec:
   - name: cluster-gateway-gateway
     namespace: envoy-gateway-system
   hostnames:
-    - "argocd-senai.com"
+    - "argocd-prod.nscloud.io"
   rules:
   - backendRefs:
     - name: argocd-server
