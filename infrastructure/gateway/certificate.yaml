@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: cluster-gateway-tls
+  namespace: envoy-gateway-system   # ← mesmo namespace do Gateway
+spec:
+  secretName: cluster-gateway-tls
+  issuerRef:
+    name: internal-ca-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - "*.nscloud.io"             # ou wildcard se preferir
