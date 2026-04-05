@@ -4,7 +4,7 @@ kind: Namespace
 metadata:
   name: {{repo-name}}
   labels:
-    senai/allowed: "true"
+    nimbus/allowed: "true"
     # Dica: Adicione uma label de dono para facilitar o filtro depois
     managed-by: "nimbus-cloud"
 ---
