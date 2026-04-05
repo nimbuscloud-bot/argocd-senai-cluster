@@ -14,4 +14,18 @@ spec:
         from: Selector
         selector:
           matchLabels:
-            senai/allowed: "true"   # ← isso não muda
+            nimbus/allowed: "true"   # ← isso não muda
+   - name: https
+    protocol: HTTPS
+    port: 443
+    tls:
+      mode: Terminate
+      certificateRefs:
+      - name: cluster-gateway-tls   # secret no mesmo namespace do Gateway
+        namespace: envoy-gateway-system
+    allowedRoutes:
+      namespaces:
+        from: Selector
+        selector:
+          matchLabels:
+            nimbus/allowed: "true"   # mesma regra que o HTTP
