@@ -68,7 +68,7 @@ metadata:
   name: phrl0-page-ioturn-demo-postgres-service
 spec:
   selector:
-    app: phrl0-page-ioturn-demo-postgres # Seleciona os pods com a label 'app: postgres'
+    app: postgres   # Seleciona os pods com a label 'app: postgres'
   ports:
     - protocol: TCP
       port: 5432       # A porta que outros pods usarão para se conectar
