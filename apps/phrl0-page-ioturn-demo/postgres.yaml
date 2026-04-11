@@ -1,0 +1,99 @@
+# 1. O Segredo (Secret) para a senha do banco de dados
+apiVersion: v1
+kind: Secret
+metadata:
+  name: phrl0-page-ioturn-demo-postgres-secret
+type: Opaque
+data:
+  POSTGRES_PASSWORD: Z1R6T25YWXhxamZLV0RmZzBOa3o= 
+
+---
+# 2. O Pedido de Armazenamento (PersistentVolumeClaim) para os dados
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: phrl0-page-ioturn-demo-postgres-pvc
+spec:
+  # Para MicroK8s, o storageclass padrão 'microk8s-hostpath' geralmente funciona
+  accessModes:
+    - ReadWriteOnce # O volume pode ser montado como leitura/escrita por um único nó
+  resources:
+    requests:
+      storage: 5Gi # Pedindo 5 Gigabytes de espaço. Ajuste conforme sua necessidade.
+
+---
+# 3. A Implantação (Deployment) do PostgreSQL
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: phrl0-page-ioturn-demo-postgres-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16 # Usando uma versão recente e específica do Postgres
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: phrl0-page-ioturn-demo # Nome do banco de dados que será criado
+            - name: POSTGRES_USER
+              value: phrl0 # Nome do usuário
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: phrl0-page-ioturn-demo-postgres-secret # Puxando a senha do Secret que criamos
+                  key: POSTGRES_PASSWORD
+          volumeMounts:
+            - name: phrl0-page-ioturn-demo-postgres-storage
+              mountPath: /var/lib/postgresql/data # Diretório padrão onde o Postgres salva os dados
+      volumes:
+        - name: phrl0-page-ioturn-demo-postgres-storage
+          persistentVolumeClaim:
+            claimName: phrl0-page-ioturn-demo-postgres-pvc # Conectando ao PVC que criamos
+
+---
+# 4. O Ponto de Acesso (Service) interno
+apiVersion: v1
+kind: Service
+metadata:
+  name: phrl0-page-ioturn-demo-postgres-service
+spec:
+  selector:
+    app: phrl0-page-ioturn-demo-postgres # Seleciona os pods com a label 'app: postgres'
+  ports:
+    - protocol: TCP
+      port: 5432       # A porta que outros pods usarão para se conectar
+      targetPort: 5432 # A porta do contêiner Postgres
+  type: ClusterIP # Tipo de serviço ideal para comunicação interna no cluster
+
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: phrl0-page-ioturn-demo-postgres-route
+  namespace: phrl0-page-ioturn-demo
+  labels:
+    gateway: my-gateway
+spec:
+  parentRefs:
+    - name: cluster-gateway-gateway # Nome do seu Gateway existente
+      namespace: envoy-gateway-system
+  hostnames:
+    - phrl0-page-ioturn-demo.postgres.internal
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: phrl0-page-ioturn-demo-postgres-service
+          port: 5432

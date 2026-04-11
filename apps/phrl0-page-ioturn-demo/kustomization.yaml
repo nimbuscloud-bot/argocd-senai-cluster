@@ -6,3 +6,4 @@ namespace: phrl0-page-ioturn-demo  # Força tudo deste grupo a ir para este name
 
 resources:
   - namespace.yaml
+  - postgres.yaml
